@@ -5,3 +5,10 @@ echo_app/app/build/
 AtualizaGIT.bat
 Servidor/
 Echo_app.older
+Admin_Echo/credentials.js
+Admin_Echo/usuarios.db
+Admin_Echo/usuarios_old.db
+Admin_Echo/iniciar_servidor.bat
+Admin_Echo/admin.html
+Admin_Echo/login.html
+Admin_Echo/requirements.txt
