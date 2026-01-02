@@ -3,3 +3,5 @@ echo_app/app/build/
 **/*.apk
 **/*.pkg
 AtualizaGIT.bat
+Servidor/
+Echo_app.older
