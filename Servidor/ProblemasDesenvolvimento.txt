@@ -1,0 +1,4 @@
+Tive que efetuar uma modificação no arquivo D:\Desenvolvimento\Projeto_Echo\Echo_app\android\app\src\main\AndroidManifest.xml adicionando em <application a linha
+
+android:networkSecurityConfig="@xml/network_security_config
+

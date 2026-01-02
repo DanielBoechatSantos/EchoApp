@@ -1,0 +1,1 @@
+python D:\Desenvolvimento\Projeto_Echo\Servidor\Server_Echo.py

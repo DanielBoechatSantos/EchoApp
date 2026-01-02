@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "b6967a67-0312-42be-bada-04b9657c8bc3"
+      }
+    },
+    "android": {
+      "package": "com.danielboechat.projeto_echo"
+    }
+  }
+}

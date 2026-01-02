@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Echo Admin</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Usuário" />
+    <input type="password" id="password" placeholder="Senha" />
+    <button onclick="login()">Entrar</button>
+    <button onclick="resetFields()">Limpar</button>
+    <p id="error" style="color:red;"></p>
+  </div>
+
+  <script>
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (res.ok) {
+        window.location.href = "admin.html";
+      } else {
+        document.getElementById("error").innerText = "Usuário ou senha inválidos";
+        resetFields();
+      }
+    }
+
+    function resetFields() {
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("error").innerText = "";
+      document.getElementById("username").focus();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold" style="color: var(--nav-dark);">Gerenciamento de Usuários</h2>
+    <button type="button" class="btn btn-primary shadow-sm" id="btn-abrir-modal">
+        ＋ Criar Novo Usuário
+    </button>
+</div>
+
+<div class="card shadow-sm border-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Nome Completo</th>
+                    <th>Login</th>
+                    <th>E-mail</th>
+                    <th>Nível</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td class="ps-4">
+                        <div class="fw-bold">{{ usuario.nome_completo }}</div>
+                    </td>
+                    <td><code class="text-primary">{{ usuario.login }}</code></td>
+                    <td class="text-muted">{{ usuario.email }}</td>
+                    <td>
+                        <span class="badge {{ 'bg-dark' if usuario.nivel == 'Router' else 'bg-secondary' }}">
+                            {{ usuario.nivel }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if usuario.status == 'ativo' %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">Ativo</span>
+                        {% else %}
+                            <span class="badge bg-light text-muted border">Inativo</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        <form action="{{ url_for('alternar_status_usuario', user_id=usuario.id) }}" method="POST" class="d-inline">
+                            {% if usuario.status == 'ativo' %}
+                                <button type="submit" class="btn btn-sm btn-outline-warning">Inativar</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-sm btn-outline-success">Ativar</button>
+                            {% endif %}
+                        </form>
+                        <form action="{{ url_for('excluir_usuario', user_id=usuario.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Excluir este usuário permanentemente?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">Nenhum usuário encontrado no sistema.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="user-modal" class="custom-modal">
+    <div class="custom-modal-content card shadow-lg">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center border-0 pt-4 px-4">
+            <h4 class="mb-0 fw-bold">Novo Usuário</h4>
+            <button class="btn-close" id="close-modal-button"></button>
+        </div>
+        <div class="card-body p-4">
+            <form action="{{ url_for('criar_usuario') }}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Nome Completo</label>
+                    <input type="text" class="form-control" name="nome_completo" placeholder="Ex: Daniel Boechat" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Login (Acesso)</label>
+                        <input type="text" class="form-control" name="login" placeholder="ex: daniel.admin" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">E-mail</label>
+                        <input type="email" class="form-control" name="email" placeholder="email@exemplo.com" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Senha</label>
+                        <input type="password" class="form-control" name="senha" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Nível de Acesso</label>
+                        <select class="form-select" name="nivel" required>
+                            <option value="Usuario" selected>Usuario (Padrão)</option>
+                            <option value="Router">Router (Admin Mobile)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4 d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Salvar Usuário</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos do Modal para Modo Claro */
+    .custom-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0; top: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        backdrop-filter: blur(4px);
+    }
+    .custom-modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        width: 90%;
+        max-width: 600px;
+        border-radius: 15px;
+        animation: slideDown 0.3s ease-out;
+    }
+    @keyframes slideDown {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    .form-control, .form-select {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 0.6rem 1rem;
+    }
+    .form-control:focus {
+        background-color: #fff;
+        box-shadow: 0 0 0 0.25rem rgba(0,123,255,0.1);
+    }
+</style>
+
+<script>
+    const userModal = document.getElementById('user-modal');
+    const btnOpenModal = document.getElementById('btn-abrir-modal');
+    const btnCloseModal = document.getElementById('close-modal-button');
+
+    btnOpenModal.onclick = () => userModal.style.display = 'block';
+    btnCloseModal.onclick = () => userModal.style.display = 'none';
+    
+    window.onclick = (event) => {
+        if (event.target == userModal) {
+            userModal.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}

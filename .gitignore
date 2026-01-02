@@ -1,0 +1,5 @@
+﻿Admin_Echo/build/
+echo_app/app/build/
+**/*.apk
+**/*.pkg
+AtualizaGIT.bat

@@ -1,0 +1,89 @@
+<body>
+  <script>
+    async function checkAuth() {
+      const res = await fetch("/users");
+      if (!res.ok) {
+        window.location.href = "login.html";
+      }
+    }
+    checkAuth();
+  </script>
+
+  <div class="admin-container">
+    <h2>Gerenciamento de Usuários</h2>
+
+    <div>
+      <input type="text" id="newUser" placeholder="Nome do usuário" />
+      <input type="password" id="newPass" placeholder="Senha" />
+      <select id="newRole">
+        <option value="user">User</option>
+        <option value="router">Router</option>
+      </select>
+      <button onclick="addUser()">Adicionar Usuário</button>
+    </div>
+
+    <h3>Usuários Cadastrados</h3>
+    <ul id="userList"></ul>
+    <button onclick="saveUsers()">Salvar Alterações</button>
+    <button onclick="logout()">Sair</button>
+  </div>
+
+  <script>
+    let users = [];
+
+    async function loadUsers() {
+      const res = await fetch("/users");
+      users = await res.json();
+      renderUsers();
+    }
+
+    function renderUsers() {
+      const list = document.getElementById("userList");
+      list.innerHTML = "";
+      users.forEach((u, i) => {
+        const li = document.createElement("li");
+        li.textContent = `${u.username} (${u.role})`;
+        const btn = document.createElement("button");
+        btn.textContent = "Remover";
+        btn.onclick = () => { users.splice(i, 1); renderUsers(); };
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+    }
+
+    function addUser() {
+      const username = document.getElementById("newUser").value;
+      const password = document.getElementById("newPass").value;
+      const role = document.getElementById("newRole").value;
+
+      if (!username || !password) {
+        alert("Preencha usuário e senha");
+        return;
+      }
+
+      users.push({ username, password, role });
+      renderUsers();
+    }
+
+    async function saveUsers() {
+      const res = await fetch("/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(users)
+      });
+
+      if (res.ok) {
+        alert("Usuários salvos com sucesso!");
+      } else {
+        alert("Erro ao salvar usuários");
+      }
+    }
+
+    async function logout() {
+      await fetch("/logout", { method: "POST" });
+      window.location.href = "login.html";
+    }
+
+    loadUsers();
+  </script>
+</body>

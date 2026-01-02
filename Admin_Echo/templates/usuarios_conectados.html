@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Usuários Conectados</h1>
+    <a href="{{ url_for('usuarios_conectados') }}" class="btn btn-sm btn-outline-secondary">Atualizar Lista</a>
+</div>
+
+<p>A lista abaixo mostra os dispositivos conectados ao servidor em tempo real.</p>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Sessão ID</th>
+                <th scope="col">Usuário Identificado</th>
+                <th scope="col" class="text-end">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sid, data in users.items() %}
+            <tr>
+                <!-- Usamos uma fonte monoespaçada para facilitar a leitura do ID -->
+                <td><code class="user-select-all">{{ sid }}</code></td>
+                <td>{{ data.user_info }}</td>
+                <td class="text-end">
+                    <button class="btn btn-info btn-sm" onclick="openLogModal('{{ sid }}')">Ver Log</button>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" class="text-center">Nenhum usuário conectado no momento.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modais de Log (um para cada usuário) -->
+{% for sid, data in users.items() %}
+<div id="log-modal-{{ sid }}" class="modal-overlay">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeLogModal('{{ sid }}')">&times;</span>
+    <h5>Log de Ações para <strong>{{ data.user_info }}</strong></h5>
+    <p><small>Sessão: <code>{{ sid }}</code></small></p>
+    <hr>
+    <ul class="list-group">
+      {% for log_entry in data.logs %}
+        <li class="list-group-item list-group-item-light">{{ log_entry }}</li>
+      {% else %}
+        <li class="list-group-item">Nenhuma ação registrada nesta sessão.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endfor %}
+
+<script>
+    function openLogModal(sid) {
+        // Fecha todos os modais abertos primeiro
+        document.querySelectorAll('.modal-overlay').forEach(modal => modal.style.display = 'none');
+        // Abre o modal específico
+        const modal = document.getElementById('log-modal-' + sid);
+        if (modal) {
+            modal.style.display = 'block';
+        }
+    }
+
+    function closeLogModal(sid) {
+        const modal = document.getElementById('log-modal-' + sid);
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Fecha o modal se o usuário clicar fora do conteúdo
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal-overlay')) {
+            event.target.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

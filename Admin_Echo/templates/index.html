@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-white p-4">
+            <h2 class="mb-4 fw-bold" style="color: var(--nav-dark);">Músicas Disponíveis</h2>
+            <form method="GET" action="{{ url_for('listar_cifras') }}">
+                <div class="input-group shadow-sm">
+                    <input type="text" name="q" class="form-control border-light-subtle" 
+                           placeholder="Buscar por título ou banda..." value="{{ q or '' }}" style="background-color: #fcfcfc;">
+                    <button class="btn btn-primary px-4" type="submit">🔍 Buscar</button>
+                    {% if q %}
+                        <a href="{{ url_for('listar_cifras') }}" class="btn btn-secondary">Limpar</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="card bg-white overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Título</th>
+                    <th>Banda</th>
+                    <th class="text-center">Tom</th>
+                    <th class="text-end pe-4">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for musica in musicas %}
+                <tr>
+                    <td class="ps-4 fw-bold text-primary">{{ musica.titulo }}</td>
+                    <td class="text-muted">{{ musica.banda }}</td>
+                    <td class="text-center">
+                        <span class="badge rounded-pill bg-info text-dark">{{ musica.tom }}</span>
+                    </td>
+                    <td class="text-end pe-4">
+                        <a href="{{ url_for('detalhar_cifra', cifra_id=musica.id) }}" class="btn btn-sm btn-outline-dark me-1">Ver</a>
+                        <a href="{{ url_for('editar_cifra', cifra_id=musica.id) }}" class="btn btn-sm btn-warning">Editar</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center py-5 text-muted">
+                        <p class="mb-0">Nenhuma cifra cadastrada ainda.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .table thead th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        border-bottom: 2px solid #f8f9fa;
+    }
+    tbody tr:hover {
+        background-color: #f8fbff !important;
+    }
+    .badge {
+        font-weight: 500;
+        padding: 0.5em 1em;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    {% if mode == 'create' %}
+        <h1 class="mb-4">Cadastrar Nova Letra e Cifra</h1>
+    {% else %}
+        <h1 class="mb-4">Editar Cifra</h1>
+    {% endif %}
+
+    <!-- CORREÇÃO: As rotas de action foram ajustadas para os modos 'create' e 'edit' -->
+    <form method="POST" action="{{ url_for('criar_cifra') if mode == 'create' else url_for('editar_cifra', cifra_id=values.id) }}">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <label for="titulo" class="form-label">Título da Música</label>
+                    <!-- CORREÇÃO: Acesso aos valores com `values['chave']` ou `values.chave` -->
+                    <input type="text" class="form-control" id="titulo" name="titulo" value="{{ values['titulo'] if values else '' }}" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="tom" class="form-label">Tom</label>
+                    <input type="text" class="form-control" id="tom" name="tom" value="{{ values['tom'] if values else '' }}" required>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="banda" class="form-label">Artista / Banda</label>
+            <input type="text" class="form-control" id="banda" name="banda" value="{{ values['banda'] if values else '' }}" required>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="letra" class="form-label">Letra</label>
+                    <textarea class="form-control" id="letra" name="letra" rows="15" required>{{ values['letra'] if values else '' }}</textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="cifra" class="form-label">Cifra</label>
+                    <textarea class="form-control" id="cifra" name="cifra" rows="15" required>{{ values['cifra'] if values else '' }}</textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">
+                {% if mode == 'create' %} Cadastrar Cifra {% else %} Salvar Alterações {% endif %}
+            </button>
+            <a href="{{ url_for('listar_cifras') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

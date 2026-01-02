@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Músicas</title>
+</head>
+<body>
+    <h1>Músicas Cadastradas</h1>
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Banda/Cantor</th>
+            <th>Tom</th>
+        </tr>
+        {% for id, titulo, banda, tom in musicas %}
+        <tr>
+            <td>{{ id }}</td>
+            <td>{{ titulo }}</td>
+            <td>{{ banda }}</td>
+            <td>{{ tom }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="{{ url_for('index') }}">Cadastrar nova música</a>
+</body>
+</html>
